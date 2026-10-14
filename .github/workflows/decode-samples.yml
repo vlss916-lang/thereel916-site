@@ -1,0 +1,15 @@
+name: decode-samples
+on:
+  push:
+    paths: ['samples/*.b64']
+permissions:
+  contents: write
+jobs:
+  decode:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          for f in samples/*.b64; do base64 -d "$f" > "${f%.b64}"; git rm -q "$f"; done
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          git add samples; git commit -m "Decode sample PDFs"; git push
